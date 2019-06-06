@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-fipt = "answerfile.h5"
+fipt = "zincm-problem.h5"
 fopt = "submissionfile.h5"
 
 opd = [('EventID', '<i8'), ('ChannelID', '<i2'), ('PETime', 'f4'), ('Weight', 'f4')]
