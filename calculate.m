@@ -1,51 +1,51 @@
-thresh=9; %Éè¶¨ãĞÖµ£¬³¬¹ı¸ÃãĞÖµµÄ¼Ç×÷Ò»¸öPEĞÅºÅ
-PEtime = cell(len,1); %Ô¤·ÖÅäPEµ½´ïÊ±¼äµÄÄÚ´æ£¬Ã¿¸ö²¨ĞÎ·ÖÅäÒ»¸öcellÊı×é
-WEIGHT = cell(len,1); %Ô¤·ÖÅäÈ¨ÖØµÄÄÚ´æ£¬Ã¿¸ö²¨ĞÎ·ÖÅäÒ»¸öcellÊı×é
+thresh=9; %è®¾å®šé˜ˆå€¼ï¼Œè¶…è¿‡è¯¥é˜ˆå€¼çš„è®°ä½œä¸€ä¸ªPEä¿¡å·
+PEtime = cell(len,1); %é¢„åˆ†é…PEåˆ°è¾¾æ—¶é—´çš„å†…å­˜ï¼Œæ¯ä¸ªæ³¢å½¢åˆ†é…ä¸€ä¸ªcellæ•°ç»„
+WEIGHT = cell(len,1); %é¢„åˆ†é…æƒé‡çš„å†…å­˜ï¼Œæ¯ä¸ªæ³¢å½¢åˆ†é…ä¸€ä¸ªcellæ•°ç»„
 
-tic %¿ªÊ¼¼ÆÊ±
-for i=1:len %¶ÔËùÓĞ²¨ĞÎ´¦ÀíµÄÑ­»·
-    thiswave = TestWave.Waveform(:,i)'; %°Ñ²¨ĞÎ¶ÁÈ¡³É1*1029µÄĞĞÏòÁ¿µ½±äÁ¿thiswave
-    baseline = backgroundV(thiswave(1:200)); %Ñ¡È¡Ç°200ns²¨ĞÎËãbaseline
-    thiswave = int16(baseline) - thiswave; %¼õÈ¥baseline
+tic %å¼€å§‹è®¡æ—¶
+for i=1:len %å¯¹æ‰€æœ‰æ³¢å½¢å¤„ç†çš„å¾ªç¯
+    thiswave = TestWave.Waveform(:,i)'; %æŠŠæ³¢å½¢è¯»å–æˆ1*1029çš„è¡Œå‘é‡åˆ°å˜é‡thiswave
+    baseline = backgroundV(thiswave(1:200)); %é€‰å–å‰200nsæ³¢å½¢ç®—baseline
+    thiswave = int16(baseline) - thiswave; %å‡å»baseline
     
-    if thiswave<thresh %Èç¹ûÃ»ÓĞÈÎºÎ²¨ĞÎ¹ıãĞÖµ£¬ÔòÑ¡È¡²¨ĞÎ×î¸ßµã×÷ÎªPEtime£¬Í¬Ê±È¨ÖØÎª1
-        tot=find(thiswave==max(thiswave)); %ÕÒµ½²¨ĞÎ×î¸ßµãÊ±¼äÎªtot
-        finalpetime = tot-7; %Éè¶¨Æ«ÒÆÁ¿Îª7
-        weigh = ones(1,length(finalpetime)); %È¨ÖØÎª1
-    else %Èç¹ûÓĞ¹ıãĞĞÅºÅ
-        begining = thiswave(1:10)<thresh; %¼ì²âÇ°10ns²¨ĞÎÓĞÃ»ÓĞ¹ıãĞ£¨Ã»ÓĞÔòÈ«Îª1£©
-        if begining %È«Îª1£¬¼´Ã»ÓĞ
-            tot=0; %³õÊ¼»¯tot
-            finalpetime=[]; %³õÊ¼»¯×îÖÕµÃµ½µÄpetime
-            weigh=[]; %³õÊ¼»¯È¨ÖØ
+    if thiswave<thresh %å¦‚æœæ²¡æœ‰ä»»ä½•æ³¢å½¢è¿‡é˜ˆå€¼ï¼Œåˆ™é€‰å–æ³¢å½¢æœ€é«˜ç‚¹ä½œä¸ºPEtimeï¼ŒåŒæ—¶æƒé‡ä¸º1
+        tot=find(thiswave==max(thiswave)); %æ‰¾åˆ°æ³¢å½¢æœ€é«˜ç‚¹æ—¶é—´ä¸ºtot
+        finalpetime = tot-7; %è®¾å®šåç§»é‡ä¸º7
+        weigh = ones(1,length(finalpetime)); %æƒé‡ä¸º1
+    else %å¦‚æœæœ‰è¿‡é˜ˆä¿¡å·
+        begining = thiswave(1:10)<thresh; %æ£€æµ‹å‰10nsæ³¢å½¢æœ‰æ²¡æœ‰è¿‡é˜ˆï¼ˆæ²¡æœ‰åˆ™å…¨ä¸º1ï¼‰
+        if begining %å…¨ä¸º1ï¼Œå³æ²¡æœ‰
+            tot=0; %åˆå§‹åŒ–tot
+            finalpetime=[]; %åˆå§‹åŒ–æœ€ç»ˆå¾—åˆ°çš„petime
+            weigh=[]; %åˆå§‹åŒ–æƒé‡
         else
-            tot=find(~begining,1); %Èç¹ûÇ°10nsÖĞÓĞ¹ıãĞĞÅºÅ
-            finalpetime = tot-6;% ÕÒµ½Ëü£¬ÉèÖÃÆ«ÒÆ
+            tot=find(~begining,1); %å¦‚æœå‰10nsä¸­æœ‰è¿‡é˜ˆä¿¡å·
+            finalpetime = tot-6;% æ‰¾åˆ°å®ƒï¼Œè®¾ç½®åç§»
             weigh = 1;
-            thiswave(1:10)=0; %È»ºó°ÑÇ°10nsĞÅºÅÉèÖÃÎª0¡£ÉÏÊö²Ù×÷ÊÇ·ÀÖ¹ÓĞ°ë¸ö²¨ĞÎ¿¨ÔÚÇ°10nsµ¼ÖÂ³ÌĞòbug¡£
+            thiswave(1:10)=0; %ç„¶åæŠŠå‰10nsä¿¡å·è®¾ç½®ä¸º0ã€‚ä¸Šè¿°æ“ä½œæ˜¯é˜²æ­¢æœ‰åŠä¸ªæ³¢å½¢å¡åœ¨å‰10nså¯¼è‡´ç¨‹åºbugã€‚
         end
-        while true %½øÈëËã·¨ºËĞÄ²¿·ÖµÄÑ­»·£º¼õÈ¥Ã¿¸öÕÒµ½µÄ²¨ĞÎ
-            wave = thiswave; %¿½±´²¨ĞÎÓÃÓÚ´¦Àí
-            wave(wave<thresh)=0; %Î´¹ıãĞµãÈÏÎªÊÇÔëÉù£¬ÉèÎª0
-            tot = find(wave,1); %ÕÒµ½µÚÒ»¸ö¹ıãĞÊ±¼ätot
-            if isempty(tot) %Èç¹ûÔÙÒ²ÕÒ²»µ½£¬Ğû¸æÒÑÈ«²¿ÕÒ³öËùÓĞĞÅºÅ
-                break %Òò´Ë½áÊøÑ­»·
+        while true %è¿›å…¥ç®—æ³•æ ¸å¿ƒéƒ¨åˆ†çš„å¾ªç¯ï¼šå‡å»æ¯ä¸ªæ‰¾åˆ°çš„æ³¢å½¢
+            wave = thiswave; %æ‹·è´æ³¢å½¢ç”¨äºå¤„ç†
+            wave(wave<thresh)=0; %æœªè¿‡é˜ˆç‚¹è®¤ä¸ºæ˜¯å™ªå£°ï¼Œè®¾ä¸º0
+            tot = find(wave,1); %æ‰¾åˆ°ç¬¬ä¸€ä¸ªè¿‡é˜ˆæ—¶é—´tot
+            if isempty(tot) %å¦‚æœå†ä¹Ÿæ‰¾ä¸åˆ°ï¼Œå®£å‘Šå·²å…¨éƒ¨æ‰¾å‡ºæ‰€æœ‰ä¿¡å·
+                break %å› æ­¤ç»“æŸå¾ªç¯
             end
-            petime = tot-6; %Èç¹ûÕÒµ½ÁË£¬ÄÇÃ´¼õÈ¥Æ«ÒÆÁ¿µÃµ½Õâ¸öĞÅºÅµÄpetime
+            petime = tot-6; %å¦‚æœæ‰¾åˆ°äº†ï¼Œé‚£ä¹ˆå‡å»åç§»é‡å¾—åˆ°è¿™ä¸ªä¿¡å·çš„petime
             
-            if isempty(finalpetime) || (petime-finalpetime(end))<3 || (petime-finalpetime(end))>5 || thiswave(peaktime)>12 %Ò»Ğ©cutÌõ¼ş¡£ÓĞĞ©
+            if isempty(finalpetime) || (petime-finalpetime(end))<3 || (petime-finalpetime(end))>5 || thiswave(peaktime)>12 %ä¸€äº›cutæ¡ä»¶ã€‚æœ‰äº›
                 weigh = [weigh,1]; 
-                finalpetime=[finalpetime,petime]; %Ğ´ÈëÒ»¸ö¹âµç×ÓÊ±¼ä¼°ÆäÈ¨ÖØ
+                finalpetime=[finalpetime,petime]; %å†™å…¥ä¸€ä¸ªå…‰ç”µå­æ—¶é—´åŠå…¶æƒé‡
             end
-            if length(finalpetime)>500 %Èç¹û·¢ÏÖÁË³¬¹ıÓĞ500¸öpetime£¬Ó¦¸ÃÊÇÏİÈëÁËËÀÑ­»·£¬Á¢¼´ÖĞÖ¹²¢±¨´í¡£
+            if length(finalpetime)>500 %å¦‚æœå‘ç°äº†è¶…è¿‡æœ‰500ä¸ªpetimeï¼Œåº”è¯¥æ˜¯é™·å…¥äº†æ­»å¾ªç¯ï¼Œç«‹å³ä¸­æ­¢å¹¶æŠ¥é”™ã€‚
                 error('too many PEs found, there must be a bug.')
             end
 
-            thiswave = thiswave - int16(modelfunc([petime+para(1),petime+para(2),para(3),para(4)],(1:1029))); %Ëã·¨Áé»ê£ºÔÚ²¨ĞÎÉÏ¼õÈ¥ÒÑ·¢ÏÖµÄĞÅºÅ¶ÔÓ¦µÄ±ê×¼¹âµç×Ó²¨ĞÎ£¬ÕâÑùÎÒÃÇ¾Í¿ÉÒÔ½«¶à¸ö¹âµç×ÓĞÅºÅµş¼ÓµÄ²¨ĞÎÖĞÈ¥³ıÒ»¸ö¹âµç×Ó²¨ĞÎ¡£
+            thiswave = thiswave - int16(modelfunc([petime+para(1),petime+para(2),para(3),para(4)],(1:1029))); %ç®—æ³•çµé­‚ï¼šåœ¨æ³¢å½¢ä¸Šå‡å»å·²å‘ç°çš„ä¿¡å·å¯¹åº”çš„æ ‡å‡†å…‰ç”µå­æ³¢å½¢ï¼Œè¿™æ ·æˆ‘ä»¬å°±å¯ä»¥å°†å¤šä¸ªå…‰ç”µå­ä¿¡å·å åŠ çš„æ³¢å½¢ä¸­å»é™¤ä¸€ä¸ªå…‰ç”µå­æ³¢å½¢ã€‚
 
-        end %¼ÌĞø²éÕÒĞÅºÅ+¼õÈ¥ÒÑ·¢ÏÖĞÅºÅµÄÑ­»·
+        end %ç»§ç»­æŸ¥æ‰¾ä¿¡å·+å‡å»å·²å‘ç°ä¿¡å·çš„å¾ªç¯
     end 
-    PEtime{i}=finalpetime;%½áÊøÒ»¸ö²¨ĞÎµÄ´¦Àí£¬Ğ´Èë¹âµç×ÓÊ±¼ä
-    WEIGHT{i}=weigh;%½áÊøÒ»¸ö²¨ĞÎµÄ´¦Àí£¬Ğ´ÈëÈ¨ÖØ
+    PEtime{i}=finalpetime;%ç»“æŸä¸€ä¸ªæ³¢å½¢çš„å¤„ç†ï¼Œå†™å…¥å…‰ç”µå­æ—¶é—´
+    WEIGHT{i}=weigh;%ç»“æŸä¸€ä¸ªæ³¢å½¢çš„å¤„ç†ï¼Œå†™å…¥æƒé‡
 end
-toc %½áÊø¼ÆÊ±
+toc %ç»“æŸè®¡æ—¶

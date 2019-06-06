@@ -12,3 +12,4 @@ with h5py.File(fipt) as ipt, h5py.File(fopt, "w") as opt:
         rst['EventID'] = ipt['EventID'][0]
         rst['ChannelID'] = ipt['ChannelID'][0]
         opt.create_dataset('Answer', data=rst, compression='gzip')
+        
