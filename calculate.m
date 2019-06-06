@@ -32,19 +32,25 @@ for i=1:len %对所有波形处理的循环
                 break %因此结束循环
             end
             petime = tot-6; %如果找到了，那么减去偏移量得到这个信号的petime
+            peaktime = findpeak(wave,1); %寻找第一个极大值
+            if isempty(peaktime) %如果找不到极大值，则说明信号已经延申到波形外，认为是最后一个波形
+                finalpetime = [finalpetime petime];
+                weigh = [weigh 1];
+                break
+            end
             
             if isempty(finalpetime) || (petime-finalpetime(end))<3 || (petime-finalpetime(end))>5 || thiswave(peaktime)>12 %一些cut条件。有些
-                weigh = [weigh,1]; 
-                finalpetime=[finalpetime,petime]; %写入一个光电子时间及其权重
+                weigh = [weigh,1];
+                finalpetime=[finalpetime,petime];
             end
             if length(finalpetime)>500 %如果发现了超过有500个petime，应该是陷入了死循环，立即中止并报错。
                 error('too many PEs found, there must be a bug.')
             end
-
+            
             thiswave = thiswave - int16(modelfunc([petime+para(1),petime+para(2),para(3),para(4)],(1:1029))); %算法灵魂：在波形上减去已发现的信号对应的标准光电子波形，这样我们就可以将多个光电子信号叠加的波形中去除一个光电子波形。
-
+            
         end %继续查找信号+减去已发现信号的循环
-    end 
+    end
     PEtime{i}=finalpetime;%结束一个波形的处理，写入光电子时间
     WEIGHT{i}=weigh;%结束一个波形的处理，写入权重
 end

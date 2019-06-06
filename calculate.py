@@ -21,13 +21,27 @@ def modelfunc(a1,a2,a3,a4,t):
 #将该函数矢量化
 vecmodelfunc = np.vectorize(modelfunc)
 
+def findpeak(w): #寻找波形的极大值点并返回最大值点的位置，如有平坦的极大值区则寻找极大值区下降沿
+    w1 = np.sign(np.diff(w))
+    I1 = np.array(range(0,len(w1)))
+    I2 = I1[w1!=0]
+    w2 = w1[I2]
+    w2 = np.diff(w2)
+    w2 = np.insert(w2,0,0)
+    Ip = I2[w2==-2]
+    if len(Ip)==0:
+        return []
+    else:
+        return Ip[0]
+
 def mmp(wr):
     w = np.array(wr[2], dtype=np.int16) #波形
 
     nothing = np.array(w[range(0,200)], dtype=np.int16) #选取前200ns波形算基准
-    nothing[nothing < 970] = 0
-    backg = np.average(nothing) #得到基准
-    wr2 = backg - w #减去基准
+    backg = np.average(nothing) 
+    nothing = nothing[nothing-backg < 6]
+    backg = np.average(nothing) 
+    wr2 = np.round(backg) - w #减去基准
 
     tot = 0
     finalpetime = []
@@ -49,23 +63,30 @@ def mmp(wr):
             wr3 = wr2 #拷贝波形用于处理
             wr3[wr3 < tresh] = 0 #未过阈点认为是噪声，设为0
             tot = np.argwhere(wr3 > 0) #找到过阈时间tot
-            if len(tot) == 0:
+            if len(tot) == 0: #如果再也找不到，宣告已全部找出所有信号
                 break
+        
             #使用第一个tot
             petime = tot[0][0] - 6 #如果找到了，那么减去偏移量得到这个信号的petime
+            
+            peaktime = findpeak(wr3)
+            if peaktime == []: #如果找不到极大值，则说明信号已经延申到波形外，认为是最后一个波形
+                weigh.append(1) #权重都为1
+                finalpetime.append(petime) #写入一个光电子时间及其权重
+                break
 
             #一些cut条件
-            if len(finalpetime) == 0 or (petime - finalpetime[-1]) < 3 or (petime - finalpetime[-1]) > 5 or wr2[petime] > 12:
+            if len(finalpetime) == 0 or (petime - finalpetime[-1]) < 3 or (petime - finalpetime[-1]) > 5 or wr2[peaktime] > 12:
                 weigh.append(1) #权重都为1
                 finalpetime.append(petime) #写入一个光电子时间及其权重
             if len(finalpetime) > 500: #如果发现了超过有500个petime，应该是陷入了死循环，立即中止并报错。
                 raise Exception('too many PEs found, there must be a bug.')
 
             dis = np.arange(1029)
-            wr2 -= vecmodelfunc(petime + para[0], petime + para[1], para[2], para[3], dis)
+            wr2 -= np.round(vecmodelfunc(petime + para[0], petime + para[1], para[2], para[3], dis))
     
     rst = np.zeros(len(finalpetime), dtype=opd)
-    rst['PETime'] = finalpetime
+    rst['PETime'] = np.array(finalpetime)+1
     rst['Weight'] = weigh
     rst['EventID'] = wr[0]
     rst['ChannelID'] = wr[1]
