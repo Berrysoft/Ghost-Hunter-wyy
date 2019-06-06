@@ -34,8 +34,8 @@ for i=1:len %对所有波形处理的循环
             petime = tot-6; %如果找到了，那么减去偏移量得到这个信号的petime
             
             if isempty(finalpetime) || (petime-finalpetime(end))<3 || (petime-finalpetime(end))>5 || thiswave(peaktime)>12 %一些cut条件。有些
-                weigh = [weigh,1];
-                finalpetime=[finalpetime,petime];
+                weigh = [weigh,1]; 
+                finalpetime=[finalpetime,petime]; %写入一个光电子时间及其权重
             end
             if length(finalpetime)>500 %如果发现了超过有500个petime，应该是陷入了死循环，立即中止并报错。
                 error('too many PEs found, there must be a bug.')
