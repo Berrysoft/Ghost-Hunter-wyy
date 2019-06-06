@@ -14,4 +14,6 @@
 1. 将m文件、transfer.py、待处理的波形拷贝到一个目录，打开matlab并运行process.m，或在命令行中进入该目录，运行matlab -r process，生成包含答案的h5文件。
 2. 使用python运行transfer.py，将matlab写出的h5文件压缩成所要求的提交格式。
 
-
+## Python脚本运行方法
+1. 拷贝文件到同一个目录。
+2. 运行calculate.py。
