@@ -39,7 +39,7 @@ for i=1:len %对所有波形处理的循环
                 break
             end
             
-            if isempty(finalpetime) || (petime-finalpetime(end))<3 || (petime-finalpetime(end))>5 || thiswave(peaktime)>12 %一些cut条件。有些
+            if isempty(finalpetime) || (petime-finalpetime(end))>4 || thiswave(peaktime)>12 %一些cut条件。有些
                 weigh = [weigh,1];
                 finalpetime=[finalpetime,petime];
             end
