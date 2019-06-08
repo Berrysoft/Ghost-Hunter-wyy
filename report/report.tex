@@ -29,10 +29,10 @@
     \large
     \begin{enumerate}
         \item Threshold method can precisely and easily find at least the first PE. \pause
-        \item Waveform of several PEs is the supersposition of single waveform of these PEs. \pause
+        \item A waveform of several PEs is the supersposition of single-PE waveforms. \pause
     \end{enumerate}
     
-    So, use threshold method to find the first PE and substract single PE waveform from original waveform, in order to search for the next PE.
+    So, use threshold method to find the first PE and substract single-PE waveform from original waveform, in order to search for the next PE.
 \end{frame}
 
 \section{Find Single PE Waveform}
@@ -130,6 +130,18 @@
         \item Some single-PE waves does not fit well (especially the descending part) $\Rightarrow$ tail after substracting $\Rightarrow$ fake PE found. \pause
     \end{itemize}
     Solution: process exceptional signals separatedly; cut fake PEs.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Results}
+    \large
+    \includegraphics[width = 0.9\textwidth]{h_WD.png}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Results}
+    \large
+    \includegraphics[width = 0.9\textwidth]{s_WD.png}
 \end{frame}
 
 \begin{frame}
