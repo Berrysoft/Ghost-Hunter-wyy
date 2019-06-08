@@ -1,2 +1,13 @@
 # Visual Studio
 .vs
+
+# LaTeX
+*.aux
+*.bbl
+*.bib
+*.blg
+*.log
+*.nav
+*.out
+*.snm
+*.toc
